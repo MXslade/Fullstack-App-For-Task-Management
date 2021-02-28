@@ -18,6 +18,8 @@ public interface CardService {
 
     Card deleteCardById(Long id);
 
+    List<Card> searchCardsByText(String text);
+
     //CRUD for CardTask
     CardTask addCardTask(CardTask cardTask);
 

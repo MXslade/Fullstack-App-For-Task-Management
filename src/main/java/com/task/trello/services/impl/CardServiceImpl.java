@@ -53,6 +53,11 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    public List<Card> searchCardsByText(String text) {
+        return cardRepository.findAllByNameContains(text);
+    }
+
+    @Override
     public CardTask addCardTask(CardTask cardTask) {
         return cardTaskRepository.save(cardTask);
     }

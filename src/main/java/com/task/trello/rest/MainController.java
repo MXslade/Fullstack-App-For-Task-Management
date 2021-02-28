@@ -116,4 +116,10 @@ public class MainController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    @GetMapping("/search-cards/{text}")
+    public ResponseEntity<?> getSearchedCards(@PathVariable(name = "text") String text) {
+        List<Card> cards = cardService.searchCardsByText(text);
+        return new ResponseEntity<>(cards, HttpStatus.OK);
+    }
 }

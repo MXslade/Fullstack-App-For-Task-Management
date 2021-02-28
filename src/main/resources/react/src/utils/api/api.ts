@@ -21,6 +21,9 @@ export const cardApi = {
   getCardById(cardId: number) {
     return instance.get(`cards/${cardId}`);
   },
+  searchCards(text: string) {
+    return instance.get(`search-cards/${text}`);
+  },
   getAllCardTasks(cardId: number) {
     return instance.get(`card-tasks/${cardId}`);
   },

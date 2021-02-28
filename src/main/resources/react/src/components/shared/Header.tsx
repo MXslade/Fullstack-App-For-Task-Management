@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { blue } from "@ant-design/colors";
+import { CardsContext } from "../../App";
 
 export const Header: React.FC = () => {
+  const { loadCards } = useContext(CardsContext);
+
   return (
     <div
       className="px-96"
@@ -15,12 +18,16 @@ export const Header: React.FC = () => {
       }}
     >
       <div style={{ fontSize: "x-large", fontWeight: 500 }}>
-        <Link to="/" style={{ color: "white" }}>
+        <Link to="/" style={{ color: "white" }} onClick={loadCards}>
           ITrello
         </Link>
       </div>
       <div>
-        <Link to="/all-cards" style={{ color: "white", marginRight: "1rem" }}>
+        <Link
+          to="/all-cards"
+          style={{ color: "white", marginRight: "1rem" }}
+          onClick={loadCards}
+        >
           All Cards
         </Link>
         <Link to="/register" style={{ color: "white", marginRight: "1rem" }}>
