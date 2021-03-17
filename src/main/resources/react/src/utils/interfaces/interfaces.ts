@@ -11,3 +11,16 @@ export interface ICard {
   addedDate: Date;
   cardTasks?: ICardTask[];
 }
+
+export interface IRole {
+  id: number;
+  name: "admin" | "manager" | "user";
+}
+
+export interface IUser {
+  id?: number;
+  email: string;
+  password?: string;
+  fullName: string;
+  roles: IRole[];
+}

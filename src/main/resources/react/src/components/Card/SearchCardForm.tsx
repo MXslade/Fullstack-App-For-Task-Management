@@ -12,12 +12,19 @@ export const SearchCardForm: React.FC = () => {
     if (event && event.key !== "Enter") {
       return;
     }
-    cardApi.searchCards(searchText).then((response) => {
-      console.log(response);
-      if (response.status === 200) {
-        setCards(response.data);
-      }
-    });
+    if (searchText.length === 0) {
+      cardApi.getAllCards().then((response) => {
+        if (response.status === 200) {
+          setCards(response.data);
+        }
+      });
+    } else {
+      cardApi.searchCards(searchText).then((response) => {
+        if (response.status === 200) {
+          setCards(response.data);
+        }
+      });
+    }
   };
 
   return (

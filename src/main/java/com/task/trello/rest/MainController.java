@@ -1,11 +1,16 @@
 package com.task.trello.rest;
 
+import com.task.trello.dto.UserDto;
 import com.task.trello.models.Card;
 import com.task.trello.models.CardTask;
+import com.task.trello.models.User;
 import com.task.trello.services.CardService;
+import com.task.trello.services.UserDataService;
+import com.task.trello.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +21,16 @@ import java.util.List;
 public class MainController {
 
     private final CardService cardService;
+    private final UserService userService;
+    private final UserDataService userDataService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public MainController(CardService cardService) {
+    public MainController(CardService cardService, UserService userService, UserDataService userDataService, PasswordEncoder passwordEncoder) {
         this.cardService = cardService;
+        this.userService = userService;
+        this.userDataService = userDataService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/cards")
@@ -121,5 +132,49 @@ public class MainController {
     public ResponseEntity<?> getSearchedCards(@PathVariable(name = "text") String text) {
         List<Card> cards = cardService.searchCardsByText(text);
         return new ResponseEntity<>(cards, HttpStatus.OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserDto userDto) {
+        User result = userService.addUser(userDto.getEmail(), userDto.getPassword(), userDto.getFullName());
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/user-data")
+    public ResponseEntity<?> getUserData() {
+        User user = userDataService.getCurrentUser();
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/update-profile-data")
+    public ResponseEntity<?> updateProfileData(@RequestBody UserDto userDto) {
+        User user = userDataService.getCurrentUser();
+        if (user != null && user.getEmail().equals(userDto.getEmail())) {
+            user.setFullName(userDto.getFullName());
+            User result = userService.updateUserData(user);
+            if (result != null) {
+                return ResponseEntity.ok(result);
+            }
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody UserDto userDto) {
+        User user = userDataService.getCurrentUser();
+        if (user != null && user.getEmail().equals(userDto.getEmail()) && passwordEncoder.matches(userDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(userDto.getNewPassword()));
+            User result = userService.updateUserData(user);
+            if (result != null) {
+                return ResponseEntity.ok(result);
+            }
+        }
+        return ResponseEntity.badRequest().build();
     }
 }

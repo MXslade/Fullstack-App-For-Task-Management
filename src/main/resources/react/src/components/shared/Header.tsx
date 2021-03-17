@@ -1,41 +1,68 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import { blue } from "@ant-design/colors";
-import { CardsContext } from "../../App";
+import { Link, useHistory } from "react-router-dom";
+import { AuthContext } from "../../App";
 
 export const Header: React.FC = () => {
-  const { loadCards } = useContext(CardsContext);
+  const history = useHistory();
+
+  const { isAuthenticated, currentUser, setIsAuthenticated } = useContext(
+    AuthContext
+  );
+
+  const handleLogoutClick = () => {
+    window.localStorage.removeItem("jwt_token");
+    setIsAuthenticated(false);
+    history.push("/welcome-page");
+  };
 
   return (
     <div
-      className="px-96"
       style={{
-        backgroundColor: blue[6],
         height: "3rem",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "center",
       }}
+      className="bg-blue-600"
     >
-      <div style={{ fontSize: "x-large", fontWeight: 500 }}>
-        <Link to="/" style={{ color: "white" }} onClick={loadCards}>
-          ITrello
-        </Link>
-      </div>
-      <div>
-        <Link
-          to="/all-cards"
-          style={{ color: "white", marginRight: "1rem" }}
-          onClick={loadCards}
-        >
-          All Cards
-        </Link>
-        <Link to="/register" style={{ color: "white", marginRight: "1rem" }}>
-          Register
-        </Link>
-        <Link to="/login" style={{ color: "white" }}>
-          Login
-        </Link>
+      <div className="flex w-9/12 items-center justify-between">
+        <div style={{ fontSize: "x-large", fontWeight: 500 }}>
+          <Link to="/" style={{ color: "white" }}>
+            ITrello
+          </Link>
+        </div>
+        {isAuthenticated ? (
+          <div>
+            <Link
+              to="/all-cards"
+              style={{ color: "white", marginRight: "1rem" }}
+            >
+              All Cards
+            </Link>
+            <Link to="/profile" style={{ color: "white", marginRight: "1rem" }}>
+              {currentUser?.fullName}
+            </Link>
+            <Link
+              to="/logout"
+              style={{ color: "white" }}
+              onClick={handleLogoutClick}
+            >
+              Logout
+            </Link>
+          </div>
+        ) : (
+          <div>
+            <Link
+              to="/register"
+              style={{ color: "white", marginRight: "1rem" }}
+            >
+              Register
+            </Link>
+            <Link to="/login" style={{ color: "white" }}>
+              Login
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { SearchCardForm } from "./SearchCardForm";
 
 export const CardsPage: React.FC = () => {
   return (
-    <div className="px-96 pt-4">
+    <div className="flex w-9/12 flex-col mx-auto mt-4">
       <SearchCardForm />
       <AddCardForm />
       <CardList />
